@@ -87,10 +87,12 @@
                         human_pulse: pulse,
                         }
                         return [
-                            agentApi.makeTextReply(`/switch aiassist2_i`, undefined, undefined, slotsToFill)
+                            agentApi.makeTextReply(`/switch aiassist2_i "article-5314a680-c19f-44f7-875e-87fdf1870c11"`, undefined, undefined, slotsToFill)
                         ]
                     }
-    
+                    addslots(systolic, diastolic, pulse)
+                        .then((res) => resolve(res))
+                        .catch((er) => logger.error(JSON.stringify(er)));
                     // Назначаем кнопке обработчик события
                     widget.querySelector("#connectButton").addEventListener('click', connectToBloodPressureMonitor);
     
