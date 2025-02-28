@@ -21,6 +21,45 @@
       "complete" === t.readyState ? s() : e.attachEvent ? e.attachEvent("onload", s) : e.addEventListener("load", s, !1)
   }(document, window);
     </script>
+    <script> 
+        window.webchatMessageWidgets = {
+         "13b": {
+             id: "13b",
+             logic(chatApi, params) {
+                 let widget = document.createElement('div');
+                 widget.id = "13b";
+                 widget.innerHTML = `<button id = "but1">send test message</button>
+                 <button id = "but2">send dialog score</button>
+                 <button id = "but3">send action</button>
+                 Dialog Params: ${JSON.stringify(params)}`;
+                 widget.style = `display: flex; flex-direction: column; width: ${params.webchatWidth}px; height: 200px; align-items: center; justify-content: space-evenly; background-color: lightgray;`;
+                 
+          widget.querySelector("#but1").addEventListener('click', function () {
+                     try {
+                         chatApi.sendMessage('Test message');
+                     } catch (e) {
+                         console.error("Oh nooo ", e);
+                     }
+                 });
+                 widget.querySelector("#but2").addEventListener('click', function () {
+                     try {
+                         chatApi.sendDialogScore(4);
+                     } catch (e) {
+                         console.error("Oh nooo ", e);
+                     }
+                 });
+                 widget.querySelector("#but3").addEventListener('click', function () {
+                     try {
+                         chatApi.pressButton("test_action");
+                     } catch (e) {
+                         console.error("Oh nooo ", e);
+                     }
+                 });
+             return widget;
+             }
+         }
+        } 
+        </script>
   </head>
   <body>
     
