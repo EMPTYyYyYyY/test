@@ -36,23 +36,34 @@
     
                     // Функция для подключения к тонометру
                     async function connectToBloodPressureMonitor() {
-                        try {
-                            const device = await navigator.bluetooth.requestDevice({
-                                filters: [{ services: ['blood_pressure'] }]
-                            });
-    
-                            const server = await device.gatt.connect();
-                            const service = await server.getPrimaryService('blood_pressure');
-                            const characteristic = await service.getCharacteristic('blood_pressure_measurement');
-    
-                            characteristic.addEventListener('characteristicvaluechanged', handleBloodPressureMeasurement);
-                            await characteristic.startNotifications();
-    
-                            document.getElementById('output').innerText = 'Успешно подключено к тонометру. Ожидание данных...';
-                        } catch (error) {
-                            document.getElementById('output').innerText = 'Ошибка подключения: ' + error.message;
-                        }
-                    }
+    try {
+        const device = await navigator.bluetooth.requestDevice({
+            filters: [{ services: ['blood_pressure'] }]
+        });
+
+        const server = await device.gatt.connect();
+        const service = await server.getPrimaryService('blood_pressure');
+        const characteristic = await service.getCharacteristic('blood_pressure_measurement');
+
+        characteristic.addEventListener('characteristicvaluechanged', handleBloodPressureMeasurement);
+        await characteristic.startNotifications();
+
+        // Проверяем, что элемент #output существует
+        const outputElement = widget.querySelector("#output");
+        if (outputElement) {
+            outputElement.innerText = 'Успешно подключено к тонометру. Ожидание данных...';
+        } else {
+            console.error("Элемент #output не найден!");
+        }
+    } catch (error) {
+        const outputElement = widget.querySelector("#output");
+        if (outputElement) {
+            outputElement.innerText = 'Ошибка подключения: ' + error.message;
+        } else {
+            console.error("Элемент #output не найден!");
+        }
+    }
+}
     
                     // Функция для обработки данных измерения
                     function handleBloodPressureMeasurement(event) {
