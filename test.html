@@ -78,6 +78,17 @@
                             <strong>Диастолическое:</strong> ${diastolic} мм рт. ст.<br>
                             <strong>Пульс:</strong> ${pulse} уд/мин
                         `;
+                        addslots(systolic, diastolic, pulse);
+                    }
+                    function addslots(systolic, diastolic, pulse) {
+                        const slotsToFill = {
+                        arterial_pressure_upper: systolic,
+                        arterial_pressure_lower: diastolic,
+                        human_pulse: pulse,
+                        }
+                        return [
+                            agentApi.makeTextReply(`/switch aiassist2_i`, undefined, undefined, slotsToFill)
+                        ]
                     }
     
                     // Назначаем кнопке обработчик события
