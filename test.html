@@ -21,45 +21,62 @@
       "complete" === t.readyState ? s() : e.attachEvent ? e.attachEvent("onload", s) : e.addEventListener("load", s, !1)
   }(document, window);
     </script>
-    <script> 
+    <script>
         window.webchatMessageWidgets = {
-         "13b": {
-             id: "13b",
-             logic(chatApi, params) {
-                 let widget = document.createElement('div');
-                 widget.id = "13b";
-                 widget.innerHTML = `<button id = "but1">send test message</button>
-                 <button id = "but2">send dialog score</button>
-                 <button id = "but3">send action</button>
-                 Dialog Params: ${JSON.stringify(params)}`;
-                 widget.style = `display: flex; flex-direction: column; width: ${params.webchatWidth}px; height: 200px; align-items: center; justify-content: space-evenly; background-color: lightgray;`;
-                 
-          widget.querySelector("#but1").addEventListener('click', function () {
-                     try {
-                         chatApi.sendMessage('Test message');
-                     } catch (e) {
-                         console.error("Oh nooo ", e);
-                     }
-                 });
-                 widget.querySelector("#but2").addEventListener('click', function () {
-                     try {
-                         chatApi.sendDialogScore(4);
-                     } catch (e) {
-                         console.error("Oh nooo ", e);
-                     }
-                 });
-                 widget.querySelector("#but3").addEventListener('click', function () {
-                     try {
-                         chatApi.pressButton("test_action");
-                     } catch (e) {
-                         console.error("Oh nooo ", e);
-                     }
-                 });
-             return widget;
-             }
-         }
-        } 
-        </script>
+            "bloodPressureMonitor": {
+                id: "bloodPressureMonitor",
+                logic(chatApi, params) {
+                    let widget = document.createElement('div');
+                    widget.id = "bloodPressureMonitor";
+                    widget.innerHTML = `
+                        <button id="connectButton">Подключиться к тонометру</button>
+                        <div id="output">Данные появятся здесь...</div>
+                    `;
+                    widget.style = `display: flex; flex-direction: column; width: ${params.webchatWidth}px; height: 300px; align-items: center; justify-content: space-evenly; background-color: lightgray;`;
+    
+                    // Функция для подключения к тонометру
+                    async function connectToBloodPressureMonitor() {
+                        try {
+                            const device = await navigator.bluetooth.requestDevice({
+                                filters: [{ services: ['blood_pressure'] }]
+                            });
+    
+                            const server = await device.gatt.connect();
+                            const service = await server.getPrimaryService('blood_pressure');
+                            const characteristic = await service.getCharacteristic('blood_pressure_measurement');
+    
+                            characteristic.addEventListener('characteristicvaluechanged', handleBloodPressureMeasurement);
+                            await characteristic.startNotifications();
+    
+                            document.getElementById('output').innerText = 'Успешно подключено к тонометру. Ожидание данных...';
+                        } catch (error) {
+                            document.getElementById('output').innerText = 'Ошибка подключения: ' + error.message;
+                        }
+                    }
+    
+                    // Функция для обработки данных измерения
+                    function handleBloodPressureMeasurement(event) {
+                        const value = event.target.value;
+                        const systolic = value.getUint16(1, true);
+                        const diastolic = value.getUint16(3, true);
+                        const pulse = value.getUint16(5, true);
+    
+                        const output = document.getElementById('output');
+                        output.innerHTML = `
+                            <strong>Систолическое:</strong> ${systolic} мм рт. ст.<br>
+                            <strong>Диастолическое:</strong> ${diastolic} мм рт. ст.<br>
+                            <strong>Пульс:</strong> ${pulse} уд/мин
+                        `;
+                    }
+    
+                    // Назначаем кнопке обработчик события
+                    widget.querySelector("#connectButton").addEventListener('click', connectToBloodPressureMonitor);
+    
+                    return widget;
+                }
+            }
+        }
+    </script>
   </head>
   <body>
     
