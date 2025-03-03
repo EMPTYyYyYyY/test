@@ -86,8 +86,8 @@
                         arterial_pressure_lower: diastolic,
                         human_pulse: pulse,
                         }
-                        let res = agentApi.makeTextReply(`/switch aiassist2_i "article-5314a680-c19f-44f7-875e-87fdf1870c11"`, undefined, undefined, slotsToFill)
-                        resolve([ res ])
+                        let msgmsg = agentApi.makeTextReply(`/switchredirect aiassist2_i intent_id="article-5314a680-c19f-44f7-875e-87fdf1870c11"`, undefined, undefined, slotsToFill)
+                        resolve ([msgmsg])
                     }
     
                     // Назначаем кнопке обработчик события
