@@ -86,10 +86,18 @@
                         arterial_pressure_lower: diastolic,
                         human_pulse: pulse,
                         }
-                        let msgmsg = agentApi.makeTextReply(`/switchredirect aiassist2_i intent_id="article-5314a680-c19f-44f7-875e-87fdf1870c11"`, undefined, undefined, slotsToFill)
-                        resolve ([msgmsg])
+                        return [agentApi.makeTextReply(`/switchredirect aiassist2_i intent_id="article-5314a680-c19f-44f7-875e-87fdf1870c11"`, undefined, undefined, slotsToFill)]
+                    }   
+                    async function run() {
+                        return await addslots(systolic, diastolic, pulse)
                     }
-    
+                    run()
+                        .then(res => resolve(res))
+                        .catch(er => {
+                            logger.error(er)
+                            resolve({})
+                        })
+
                     // Назначаем кнопке обработчик события
                     widget.querySelector("#connectButton").addEventListener('click', connectToBloodPressureMonitor);
     
