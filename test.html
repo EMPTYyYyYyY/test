@@ -88,7 +88,7 @@
                             headers: {
                                 'Content-Type': 'application/json',
                             },
-                            body: {"arterial_pressure_upper": 120, "arterial_pressure_lower": 80, "human_pulse": 70},
+                            body: JSON.stringify({"arterial_pressure_upper": 120, "arterial_pressure_lower": 80, "human_pulse": 70}),
                         }).then(response => {
                             if (!response.ok) {
                                 throw new Error('Ошибка сети');
