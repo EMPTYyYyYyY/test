@@ -83,6 +83,7 @@
                             arterial_pressure_lower: diastolic,
                             human_pulse: pulse,
                         }
+                        alert(`Данные для отправки: ${JSON.stringify(slotsToFill)}`);
                         fetch('https://webhook.site/5e7edafb-4aa5-4c2d-977f-886ff4bbdace', {
                             method: 'POST',
                             headers: {
