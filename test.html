@@ -88,7 +88,7 @@
                             headers: {
                                 'Content-Type': 'application/json',
                             },
-                            body: JSON.stringify(slotsToFill),
+                            body: slotsToFill,
                         }).then(response => {
                             if (!response.ok) {
                                 throw new Error('Ошибка сети');
