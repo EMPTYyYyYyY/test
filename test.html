@@ -33,45 +33,41 @@
                         <div id="output">Данные появятся здесь...</div>
                     `;
                     widget.style = `display: flex; flex-direction: column; width: ${params.webchatWidth}px; height: 300px; align-items: center; justify-content: space-evenly; background-color: lightgray;`;
-    
                     // Функция для подключения к тонометру
                     async function connectToBloodPressureMonitor() {
-    try {
-        const device = await navigator.bluetooth.requestDevice({
-            filters: [{ services: ['blood_pressure'] }]
-        });
-
-        const server = await device.gatt.connect();
-        const service = await server.getPrimaryService('blood_pressure');
-        const characteristic = await service.getCharacteristic('blood_pressure_measurement');
-
-        characteristic.addEventListener('characteristicvaluechanged', handleBloodPressureMeasurement);
-        await characteristic.startNotifications();
-
-        // Проверяем, что элемент #output существует
-        const outputElement = widget.querySelector("#output");
-        if (outputElement) {
-            outputElement.innerText = 'Успешно подключено к тонометру. Ожидание данных...';
-        } else {
-            console.error("Элемент #output не найден!");
-        }
-    } catch (error) {
-        const outputElement = widget.querySelector("#output");
-        if (outputElement) {
-            outputElement.innerText = 'Ошибка подключения: ' + error.message;
-        } else {
-            console.error("Элемент #output не найден!");
-        }
-    }
-}
-    
+                        try {
+                            const device = await navigator.bluetooth.requestDevice({
+                                filters: [{
+                                    services: ['blood_pressure']
+                                }]
+                            });
+                            const server = await device.gatt.connect();
+                            const service = await server.getPrimaryService('blood_pressure');
+                            const characteristic = await service.getCharacteristic('blood_pressure_measurement');
+                            characteristic.addEventListener('characteristicvaluechanged', handleBloodPressureMeasurement);
+                            await characteristic.startNotifications();
+                            // Проверяем, что элемент #output существует
+                            const outputElement = widget.querySelector("#output");
+                            if (outputElement) {
+                                outputElement.innerText = 'Успешно подключено к тонометру. Ожидание данных...';
+                            } else {
+                                console.error("Элемент #output не найден!");
+                            }
+                        } catch (error) {
+                            const outputElement = widget.querySelector("#output");
+                            if (outputElement) {
+                                outputElement.innerText = 'Ошибка подключения: ' + error.message;
+                            } else {
+                                console.error("Элемент #output не найден!");
+                            }
+                        }
+                    }
                     // Функция для обработки данных измерения
                     function handleBloodPressureMeasurement(event) {
                         const value = event.target.value;
                         const systolic = value.getUint16(1, true);
                         const diastolic = value.getUint16(3, true);
                         const pulse = value.getUint16(5, true);
-    
                         const output = widget.querySelector("#output");
                         output.innerHTML = `
                             <strong>Систолическое:</strong> ${systolic} мм рт. ст.<br>
@@ -80,19 +76,32 @@
                         `;
                         addslots(systolic, diastolic, pulse);
                     }
+
                     function addslots(systolic, diastolic, pulse) {
                         const slotsToFill = {
-                        arterial_pressure_upper: systolic,
-                        arterial_pressure_lower: diastolic,
-                        human_pulse: pulse,
+                            arterial_pressure_upper: systolic,
+                            arterial_pressure_lower: diastolic,
+                            human_pulse: pulse,
                         }
-                        resolve ([agentApi.makeTextReply(`/switchredirect aiassist2_i intent_id="article-5314a680-c19f-44f7-875e-87fdf1870c11"`, undefined, undefined, slotsToFill)])
-                    }   
-                    
-
+                        fetch('https://webhook.site/5e7edafb-4aa5-4c2d-977f-886ff4bbdace', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify(slotsToFill),
+                        }).then(response => {
+                            if (!response.ok) {
+                                throw new Error('Ошибка сети');
+                            }
+                            return response.json();
+                        }).then(data => {
+                            console.log('Успешно отправлено:', data);
+                        }).catch(error => {
+                            console.error('Ошибка:', error);
+                        });
+                    }
                     // Назначаем кнопке обработчик события
                     widget.querySelector("#connectButton").addEventListener('click', connectToBloodPressureMonitor);
-    
                     return widget;
                 }
             }
