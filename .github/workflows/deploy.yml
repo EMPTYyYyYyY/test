@@ -1,0 +1,29 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]  # Запускать workflow при пуше в ветку main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest  # Используем последнюю версию Ubuntu
+
+    steps:
+      # Шаг 1: Клонируем репозиторий
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Шаг 2: Создаем config.js с секретами
+      - name: Create config.js
+        env:
+          LOGIN: ${{ secrets.LOGIN }}
+          PASSWORD: ${{ secrets.PASSWORD }}            
+        run: |
+          echo "const config = { login: '$LOGIN', password: '$PASSWORD' };" > config.js
+
+      # Шаг 3: Деплоим на GitHub Pages
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GIT_TOKEN }}  # Токен для доступа к репозиторию
+          publish_dir: ./                            # Папка с файлами для деплоя
