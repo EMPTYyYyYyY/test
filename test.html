@@ -3,6 +3,22 @@
 <head>
     <meta charset="utf-8">
     <title>Тонометр</title>
+    <script>! function(t, e) {
+        const a = "channel_4aadd21",
+            n = "webchat-js-container:".concat(a);
+    
+        function s() {
+            const e = t.createElement("iframe");
+            e.id = n, e.className = n;
+            const s = t.createElement("script");
+            s.type = "text/javascript", s.async = !0, s.src = "//dm.monikiweb.ru/assets/js/" + a, e.addEventListener("load", (() => {
+                e.contentDocument.head.appendChild(s)
+            })), t.head.appendChild(e);
+            const c = t.createElement("link");
+            c.setAttribute("rel", "stylesheet"), c.setAttribute("type", "text/css"), c.setAttribute("href", "//dm.monikiweb.ru/assets/css/" + a), t.getElementsByTagName("head")[0].appendChild(c)
+        }
+        "complete" === t.readyState ? s() : e.attachEvent ? e.attachEvent("onload", s) : e.addEventListener("load", s, !1)
+    }(document, window);</script>
     <script>
         window.webchatMessageWidgets = {
             "bloodPressureMonitor": {
@@ -71,30 +87,34 @@
                         addslots(systolic, diastolic, pulse);
                     }
 
-                    // Функция для отправки данных
+                    
                     function addslots(systolic, diastolic, pulse) {
-                        const url = 'https://dm.monikiweb.ru/api/external/auth/authorize';
-                        const data = {
+                       const url = 'https://dm.monikiweb.ru/api/external/auth/authorize';
+                       const data = JSON.stringify({
                             login: params.login,
                             password: params.password
-                        };
-                        try {
-                            const response = fetch(url, {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify(data)
-                            });
-                            const result = response.json();
-                            alert('Успешная авторизация:', JSON.stringify(result));
-                            return result;
+                        });
+
+                        const xhr = new XMLHttpRequest();
+                        xhr.open('POST', url, true);
+                        xhr.setRequestHeader('Content-Type', 'application/json');
+
+                        xhr.onload = function () {
+                            if (xhr.status >= 200 && xhr.status < 300) {
+                                const result = JSON.parse(xhr.responseText);
+                                alert('Ответ от сервера: ' + JSON.stringify(result)); // Вывод результата в alert
+                            } else {
+                                alert('Ошибка при авторизации: ' + xhr.statusText); // Вывод ошибки в alert
                             }
-                        catch (error) {
-                            console.error('Ошибка при авторизации:', error);
-                        } 
+                        };
+
+                        xhr.onerror = function () {
+                            alert('Ошибка сети при выполнении запроса'); // Обработка ошибок сети
+                        };
+
+                        xhr.send(data);
                     }
-                    // Назначаем кнопке обработчик события
+                    
                     widget.querySelector("#connectButton").addEventListener('click', connectToBloodPressureMonitor);
                     return widget;
                 }
