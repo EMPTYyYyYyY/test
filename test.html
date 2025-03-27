@@ -78,42 +78,15 @@
                             pulse = dataView.getUint16(offset, true);
                             offset += 2;
                         }
-                        const output = widget.querySelector("#output");
-                        output.innerHTML = `
-                            <strong>Систолическое:</strong> ${systolic} мм рт. ст.<br>
-                            <strong>Диастолическое:</strong> ${diastolic} мм рт. ст.<br>
-                            ${pulse !== null ? `<strong>Пульс:</strong> ${pulse} уд/мин` : ''}
-                        `;
-                        addslots(systolic, diastolic, pulse);
-                    }
-
-                    
-                    function addslots(systolic, diastolic, pulse) {
-                       const url = 'https://dm.monikiweb.ru/api/external/auth/authorize';
-                       const data = JSON.stringify({
-                            login: params.login,
-                            password: params.password
+                        widget.querySelector("#connectButton").addEventListener('click', function () {
+                            try {
+                                chatApi.sendMessage('Test message');
+                            } catch (e) {
+                                console.error("Oh nooo ", e);
+                        }
                         });
-
-                        const xhr = new XMLHttpRequest();
-                        xhr.open('POST', url, true);
-                        xhr.setRequestHeader('Content-Type', 'application/json');
-
-                        xhr.onload = function () {
-                            if (xhr.status >= 200 && xhr.status < 300) {
-                                const result = JSON.parse(xhr.responseText);
-                                alert('Ответ от сервера: ' + JSON.stringify(result)); // Вывод результата в alert
-                            } else {
-                                alert('Ошибка при авторизации: ' + xhr.statusText); // Вывод ошибки в alert
-                            }
-                        };
-
-                        xhr.onerror = function () {
-                            alert('Ошибка сети при выполнении запроса'); // Обработка ошибок сети
-                        };
-
-                        xhr.send(data);
                     }
+                
                     
                     widget.querySelector("#connectButton").addEventListener('click', connectToBloodPressureMonitor);
                     return widget;
