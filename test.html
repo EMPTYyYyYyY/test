@@ -28,6 +28,7 @@
                     widget.id = "bloodPressureMonitor";
                     widget.innerHTML = `
                         <button id="connectButton">Подключиться к тонометру</button>
+                        <button id="infoButton">Отправить результаты</button>
                         <div id="output">Данные появятся здесь...</div>
                     `;
                     widget.style = `display: flex; flex-direction: column; width: ${params.webchatWidth}px; height: 300px; align-items: center; justify-content: space-evenly; background-color: lightgray;`;
@@ -78,9 +79,9 @@
                             pulse = dataView.getUint16(offset, true);
                             offset += 2;
                         }
-                        widget.querySelector("#connectButton").addEventListener('click', function () {
+                        widget.querySelector("#infoButton").addEventListener('click', function () {
                             try {
-                                chatApi.sendMessage('Test message');
+                                chatApi.sendMessage(`Результаты измерения:\nВерхнее давление - ${systolic}\nНижнее давление - ${diastolic}\nПульс - ${pulse}`);
                             } catch (e) {
                                 console.error("Oh nooo ", e);
                         }
