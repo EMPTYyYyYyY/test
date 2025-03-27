@@ -81,7 +81,7 @@
                         }
                         widget.querySelector("#infoButton").addEventListener('click', function () {
                             try {
-                                chatApi.sendMessage(`Результаты измерения:\nВерхнее давление - ${systolic}\nНижнее давление - ${diastolic}\nПульс - ${pulse}`);
+                                chatApi.sendMessage(`Результаты измерения:\nВерхнее давление - ${systolic} мм рс.ст.\nНижнее давление - ${diastolic} мм рс.ст.\nПульс - ${pulse} уд/мин`);
                             } catch (e) {
                                 console.error("Oh nooo ", e);
                         }
